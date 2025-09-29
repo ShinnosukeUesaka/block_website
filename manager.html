@@ -8,11 +8,13 @@
     :root {
       color-scheme: light dark;
       --bg: #f5f5f5;
-      --fg: #202124;
+      --fg: #1f1f1f;
       --surface: #ffffff;
       --border: #d2d2d2;
       --accent: #1a73e8;
+      --accent-soft: rgba(26, 115, 232, 0.12);
       --error: #b00020;
+      --success: #0f9d58;
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
 
@@ -26,12 +28,14 @@
     }
 
     main {
-      width: min(760px, 100%);
+      width: min(920px, 100%);
       padding: 48px 24px 64px;
+      display: grid;
+      gap: 24px;
     }
 
     header h1 {
-      font-size: clamp(1.8rem, 2.3vw + 1rem, 2.8rem);
+      font-size: clamp(1.9rem, 2.2vw + 1rem, 3rem);
       margin: 0 0 8px;
     }
 
@@ -39,39 +43,53 @@
       margin: 0;
       color: #5f6368;
       font-size: 1rem;
+      max-width: 640px;
     }
 
-    section {
-      margin-top: 32px;
+    section.card {
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 24px;
-      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.05);
+      border-radius: 16px;
+      padding: 28px;
+      box-shadow: 0 22px 44px rgba(0, 0, 0, 0.06);
+      display: grid;
+      gap: 20px;
     }
 
-    form {
+    section.card h2 {
+      margin: 0;
+      font-size: 1.4rem;
+    }
+
+    form.inline {
       display: grid;
       grid-template-columns: 1fr auto;
       gap: 12px;
       align-items: center;
-      margin-bottom: 16px;
     }
 
-    label {
+    form.inline label {
       grid-column: 1 / -1;
       font-weight: 600;
       font-size: 0.95rem;
       color: #3c4043;
     }
 
-    input[type="text"] {
+    input[type="text"],
+    input[type="password"],
+    textarea {
       padding: 12px;
       border: 1px solid var(--border);
       border-radius: 8px;
       font-size: 1rem;
-      width: 100%;
       box-sizing: border-box;
+      width: 100%;
+    }
+
+    textarea {
+      min-height: 140px;
+      resize: vertical;
+      line-height: 1.4;
     }
 
     button {
@@ -96,37 +114,72 @@
       border: 1px solid var(--accent);
     }
 
-    ul {
+    ul.list {
       list-style: none;
       margin: 0;
       padding: 0;
-    }
-
-    li {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 12px 0;
-      border-bottom: 1px solid var(--border);
+      display: grid;
       gap: 12px;
     }
 
-    li:last-child {
-      border-bottom: none;
+    form.inline textarea,
+    form.inline .form-actions {
+      grid-column: 1 / -1;
     }
 
-    .empty-state {
-      text-align: center;
-      padding: 40px 24px;
-      color: #5f6368;
-      border: 1px dashed var(--border);
+    form.inline .form-actions {
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    li.row {
+      display: grid;
+      gap: 12px;
+      padding: 16px;
+      border: 1px solid var(--border);
       border-radius: 12px;
-      background: rgba(26, 115, 232, 0.05);
+      align-items: start;
+      background: rgba(255, 255, 255, 0.6);
+    }
+
+    li.row header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+
+    li.row h3 {
+      margin: 0;
+      font-size: 1rem;
+    }
+
+    li.row p {
+      margin: 0;
+      color: #4a4a4a;
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+
+    .policy-editor {
+      display: grid;
+      gap: 8px;
+    }
+
+    .policy-editor textarea {
+      min-height: 110px;
+      resize: vertical;
+    }
+
+    .policy-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
     }
 
     .status-message {
-      min-height: 1.4rem;
-      font-size: 0.95rem;
+      min-height: 1.2rem;
+      font-size: 0.92rem;
       font-weight: 600;
     }
 
@@ -135,20 +188,44 @@
     }
 
     .status-message.success {
-      color: #0f9d58;
+      color: var(--success);
     }
 
-    @media (max-width: 600px) {
+    .hint {
+      margin: 0;
+      font-size: 0.9rem;
+      color: #5f6368;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    @media (max-width: 680px) {
       main {
         padding: 32px 16px 48px;
       }
 
-      form {
+      form.inline {
         grid-template-columns: 1fr;
       }
 
-      button {
+      button,
+      button.secondary {
         width: 100%;
+      }
+
+      li.row header {
+        flex-direction: column;
+        align-items: flex-start;
       }
     }
   </style>
@@ -157,20 +234,56 @@
   <main>
     <header>
       <h1>Website Blocker</h1>
-      <p>Add the domains you want to stay away from and we will keep them out of reach.</p>
+      <p>Define the sites you want to avoid, capture per-site guardrails, and let AI handle temporary access requests.</p>
     </header>
 
-    <section>
-      <form id="add-form">
+    <section class="card" id="blocked-card">
+      <h2>Blocked domains</h2>
+      <form id="add-form" class="inline">
         <label for="new-domain">Domain to block</label>
         <input id="new-domain" type="text" name="domain" placeholder="example.com">
-        <button type="submit">Add</button>
+        <label for="new-policy">Policy for this domain (optional)</label>
+        <textarea id="new-policy" name="policy" placeholder="Describe the guardrails for this site."></textarea>
+        <div class="form-actions">
+          <button type="submit">Add</button>
+        </div>
       </form>
-      <div class="status-message" id="status" role="status" aria-live="polite"></div>
-      <ul id="blocked-list" aria-live="polite"></ul>
-      <template id="empty-template">
-        <div class="empty-state">You have not blocked any sites yet.</div>
+      <div class="status-message" id="block-status" role="status" aria-live="polite"></div>
+      <ul id="blocked-list" class="list" aria-live="polite"></ul>
+      <template id="blocked-empty-template">
+        <div class="pill">No domains blocked yet</div>
       </template>
+    </section>
+
+    <section class="card" id="global-policy-card">
+      <h2>Global policy</h2>
+      <textarea id="global-policy" placeholder="Outline the guiding principles for access requests."></textarea>
+      <div class="actions">
+        <button id="save-global-policy" type="button">Save global policy</button>
+      </div>
+      <div class="status-message" id="global-policy-status" role="status" aria-live="polite"></div>
+    </section>
+
+    <section class="card" id="ai-card">
+      <h2>OpenAI settings</h2>
+      <p class="hint">Provide an API key with access to gpt-4o models. The key is stored locally in Chrome storage.</p>
+      <form id="api-form" class="inline">
+        <label for="api-key">OpenAI API key</label>
+        <input id="api-key" type="password" placeholder="sk-...">
+        <button type="submit">Save key</button>
+      </form>
+      <div class="status-message" id="api-status" role="status" aria-live="polite"></div>
+    </section>
+
+    <section class="card" id="monitor-card">
+      <h2>Monitoring cadence</h2>
+      <p class="hint">Choose how frequently to capture screenshots while a site is temporarily unblocked.</p>
+      <form id="monitor-form" class="inline">
+        <label for="monitor-interval">Screenshot interval (seconds)</label>
+        <input id="monitor-interval" type="number" min="10" step="5" placeholder="60">
+        <button type="submit">Save monitoring interval</button>
+      </form>
+      <div class="status-message" id="monitor-status" role="status" aria-live="polite"></div>
     </section>
   </main>
   <script src="manager.js"></script>

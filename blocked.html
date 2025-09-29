@@ -2,16 +2,27 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Blocked by Website Blocker</title>
+  <title>Access Restricted</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
     :root {
       color-scheme: light dark;
-      --bg: radial-gradient(circle at top left, #1a73e8, #0f9d58);
-      --surface: rgba(255, 255, 255, 0.92);
-      --fg: #202124;
-      --accent: #1a73e8;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --bg: radial-gradient(circle at 20% 20%, #2e9afe 0%, #2f61e8 38%, #1f4acc 70%, #132f78 100%);
+      --surface: rgba(255, 255, 255, 0.87);
+      --surface-alt: rgba(255, 255, 255, 0.94);
+      --border: rgba(18, 56, 134, 0.14);
+      --fg: #0f172a;
+      --muted: rgba(15, 23, 42, 0.65);
+      --accent: linear-gradient(135deg, #5fb7ff 0%, #2f61e8 54%, #2f68ff 100%);
+      --accent-solid: #2f61e8;
+      --error: #d64545;
+      --success: #0f9d58;
+      font-family: "Inter", "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background-color: #0f172a;
+    }
+
+    * {
+      box-sizing: border-box;
     }
 
     body {
@@ -20,71 +31,521 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      padding: clamp(32px, 6vw, 64px);
       background: var(--bg);
+      color: var(--fg);
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: -30%;
+      background: radial-gradient(circle at 25% 20%, rgba(255, 255, 255, 0.22), transparent 52%),
+        radial-gradient(circle at 80% 10%, rgba(79, 148, 255, 0.2), transparent 65%),
+        radial-gradient(circle at 50% 80%, rgba(64, 226, 190, 0.18), transparent 60%);
+      z-index: 0;
+      filter: blur(40px);
+      opacity: 0.65;
     }
 
     main {
-      width: min(520px, 90vw);
-      padding: 48px 40px;
-      border-radius: 28px;
+      position: relative;
+      z-index: 1;
+      width: min(960px, 94vw);
+      padding: clamp(40px, 5vw, 56px);
+      border-radius: 36px;
       background: var(--surface);
-      box-shadow: 0 40px 80px rgba(0, 0, 0, 0.25);
-      text-align: center;
+      backdrop-filter: blur(26px);
+      border: 1px solid var(--border);
+      box-shadow: 0 50px 120px rgba(3, 14, 46, 0.32), 0 18px 36px rgba(3, 14, 46, 0.18);
+      display: grid;
+      gap: clamp(32px, 4vw, 48px);
+    }
+
+    .hero {
+      display: grid;
+      gap: 16px;
+    }
+
+    .violation-banner {
+      padding: 14px 18px;
+      border-radius: 16px;
+      background: rgba(214, 69, 69, 0.15);
+      color: var(--error);
+      font-weight: 600;
+      line-height: 1.4;
+      box-shadow: 0 18px 40px rgba(214, 69, 69, 0.18);
+    }
+
+    .violation-banner.hidden {
+      display: none;
+    }
+
+    .hero-badge {
+      justify-self: flex-start;
+      padding: 8px 18px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      background: rgba(255, 255, 255, 0.45);
+      border: 1px solid rgba(18, 56, 134, 0.18);
+      color: var(--fg);
+      box-shadow: 0 10px 24px rgba(29, 78, 216, 0.18);
     }
 
     h1 {
-      margin: 0 0 12px;
-      font-size: clamp(2rem, 2.5vw + 1rem, 3rem);
+      margin: 0;
+      font-size: clamp(2.2rem, 2vw + 1.4rem, 3.1rem);
+      letter-spacing: -0.02em;
     }
 
     p {
-      margin: 0 0 24px;
-      font-size: 1.05rem;
-      color: #3c4043;
+      margin: 0;
+      line-height: 1.6;
+      font-size: 1.06rem;
+      color: var(--muted);
     }
 
     .blocked-domain {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      padding: 12px 20px;
+      padding: 10px 18px;
       border-radius: 999px;
-      background: rgba(26, 115, 232, 0.08);
-      color: var(--accent);
+      background: rgba(47, 97, 232, 0.12);
+      color: var(--accent-solid);
       font-weight: 600;
       font-size: 1rem;
-      margin-bottom: 32px;
+      margin-left: 6px;
+    }
+
+    .layout-grid {
+      display: grid;
+      gap: clamp(24px, 1.5vw, 36px);
+      grid-template-columns: 1fr;
+      align-items: start;
+    }
+
+    .panel {
+      background: var(--surface-alt);
+      border-radius: 28px;
+      padding: clamp(24px, 2vw, 32px);
+      border: 1px solid rgba(15, 23, 42, 0.08);
+      box-shadow: 0 28px 72px rgba(15, 23, 42, 0.12);
+      display: grid;
+      gap: 20px;
+    }
+
+    .policy-box {
+      background: rgba(255, 255, 255, 0.68);
+      box-shadow: none;
+      border: 1px solid rgba(15, 23, 42, 0.08);
+    }
+
+    .policy-box h2 {
+      font-size: 1.15rem;
+      color: rgba(15, 23, 42, 0.72);
+      font-weight: 600;
+    }
+
+    .panel h2 {
+      margin: 0;
+      font-size: 1.35rem;
+      letter-spacing: -0.01em;
+      color: var(--fg);
+    }
+
+    .muted {
+      color: rgba(15, 23, 42, 0.58);
+      font-size: 0.98rem;
+    }
+
+    .policy-summary {
+      font-size: 0.98rem;
+      color: rgba(15, 23, 42, 0.58);
+    }
+
+    .site-policy {
+      border-radius: 20px;
+      padding: 16px 20px;
+      background: rgba(47, 97, 232, 0.05);
+      border: 1px solid rgba(47, 97, 232, 0.12);
+      display: grid;
+      gap: 8px;
+    }
+
+    .site-policy h3 {
+      margin: 0;
+      font-size: 1rem;
+      color: rgba(47, 97, 232, 0.75);
+    }
+
+    .site-policy p {
+      margin: 0;
+      font-size: 0.96rem;
+      color: var(--fg);
+      line-height: 1.5;
+    }
+
+    form {
+      display: grid;
+      gap: 20px;
+    }
+
+    .field-group {
+      display: grid;
+      gap: 10px;
+    }
+
+    label {
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: var(--fg);
+    }
+
+    textarea,
+    input[type="number"] {
+      font-size: 1rem;
+      font-family: inherit;
+      padding: 14px 16px;
+      border-radius: 18px;
+      border: 1px solid rgba(15, 23, 42, 0.14);
+      background: rgba(255, 255, 255, 0.9);
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      color: var(--fg);
+    }
+
+    textarea {
+      min-height: 140px;
+      resize: vertical;
+    }
+
+    textarea:focus-visible,
+    input[type="number"]:focus-visible {
+      outline: none;
+      border-color: rgba(47, 97, 232, 0.6);
+      box-shadow: 0 0 0 4px rgba(47, 97, 232, 0.18);
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
     }
 
     button {
+      font-family: inherit;
+      font-size: 1rem;
+      border: none;
+      border-radius: 999px;
+      padding: 15px 30px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.18s ease, box-shadow 0.22s ease, filter 0.18s ease;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
-      border: none;
-      border-radius: 999px;
-      padding: 14px 26px;
-      background: var(--accent);
-      color: white;
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: transform 0.15s ease, box-shadow 0.2s ease;
-      text-decoration: none;
     }
 
-    button:hover {
+    button.primary {
+      background: var(--accent);
+      color: white;
+      box-shadow: 0 20px 40px rgba(47, 97, 232, 0.35);
+    }
+
+    button.primary:hover {
       transform: translateY(-1px);
-      box-shadow: 0 10px 20px rgba(26, 115, 232, 0.2);
+      filter: brightness(1.03);
+    }
+
+    button.primary:active {
+      transform: translateY(0);
+      filter: brightness(0.96);
+    }
+
+    button.secondary {
+      background: transparent;
+      color: var(--accent-solid);
+      border: 2px solid rgba(47, 97, 232, 0.55);
+    }
+
+    button.secondary:hover {
+      background: rgba(47, 97, 232, 0.08);
+    }
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: wait;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .status-line {
+      min-height: 1.4rem;
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: var(--muted);
+    }
+
+    .status-line.error {
+      color: var(--error);
+    }
+
+    .status-line.success {
+      color: var(--success);
+    }
+
+    @media (max-width: 900px) {
+      .layout-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Time Selector Styles */
+    .time-selector {
+      display: grid;
+      gap: 20px;
+      padding: 20px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.95);
+      border: 1px solid rgba(47, 97, 232, 0.08);
+      box-shadow: 0 12px 32px rgba(47, 97, 232, 0.08);
+    }
+
+    .preset-buttons {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .preset-btn {
+      padding: 12px 20px;
+      border: 2px solid rgba(47, 97, 232, 0.2);
+      border-radius: 16px;
+      background: transparent;
+      color: rgba(47, 97, 232, 0.8);
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+      min-width: 60px;
+    }
+
+    .preset-btn:hover {
+      border-color: rgba(47, 97, 232, 0.4);
+      background: rgba(47, 97, 232, 0.05);
+      transform: translateY(-1px);
+    }
+
+    .preset-btn.active {
+      background: linear-gradient(135deg, #5fb7ff 0%, #2f61e8 54%, #2f68ff 100%);
+      border-color: #2f61e8;
+      color: white;
+      box-shadow: 0 8px 24px rgba(47, 97, 232, 0.3);
+    }
+
+    .preset-btn.active:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 12px 32px rgba(47, 97, 232, 0.4);
+    }
+
+    .time-display {
+      text-align: center;
+      display: flex;
+      align-items: baseline;
+      justify-content: center;
+      gap: 8px;
+      margin: 8px 0;
+    }
+
+    .time-value {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #2f61e8;
+      line-height: 1;
+    }
+
+    .time-unit {
+      font-size: 1.1rem;
+      color: rgba(47, 97, 232, 0.7);
+      font-weight: 500;
+    }
+
+    .custom-slider-container {
+      display: grid;
+      gap: 12px;
+    }
+
+    .slider-wrapper {
+      position: relative;
+      height: 8px;
+      margin: 16px 0;
+    }
+
+    .time-slider {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 8px;
+      border-radius: 8px;
+      background: rgba(47, 97, 232, 0.15);
+      outline: none;
+      position: relative;
+      cursor: pointer;
+      z-index: 2;
+    }
+
+    .time-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #5fb7ff 0%, #2f61e8 54%, #2f68ff 100%);
+      cursor: pointer;
+      box-shadow: 0 6px 16px rgba(47, 97, 232, 0.3);
+      transition: all 0.2s ease;
+    }
+
+    .time-slider::-webkit-slider-thumb:hover {
+      transform: scale(1.1);
+      box-shadow: 0 8px 24px rgba(47, 97, 232, 0.4);
+    }
+
+    .time-slider::-moz-range-thumb {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #5fb7ff 0%, #2f61e8 54%, #2f68ff 100%);
+      cursor: pointer;
+      box-shadow: 0 6px 16px rgba(47, 97, 232, 0.3);
+      border: none;
+      transition: all 0.2s ease;
+    }
+
+    .time-slider::-moz-range-thumb:hover {
+      transform: scale(1.1);
+      box-shadow: 0 8px 24px rgba(47, 97, 232, 0.4);
+    }
+
+    .slider-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      color: rgba(47, 97, 232, 0.6);
+      font-weight: 500;
+    }
+
+    @media (max-width: 640px) {
+      body {
+        padding: 24px;
+      }
+
+      main {
+        border-radius: 28px;
+        padding: 32px 24px;
+      }
+
+      .actions {
+        flex-direction: column;
+      }
+
+      .actions button {
+        width: 100%;
+      }
+
+      .time-selector {
+        padding: 16px;
+        gap: 16px;
+      }
+
+      .preset-buttons {
+        gap: 8px;
+      }
+
+      .preset-btn {
+        padding: 10px 16px;
+        font-size: 0.9rem;
+        min-width: 50px;
+      }
+
+      .time-value {
+        font-size: 2rem;
+      }
+
+      .time-unit {
+        font-size: 1rem;
+      }
     }
   </style>
 </head>
 <body>
   <main>
-    <h1>Hold up!</h1>
-    <p>This site is on your blocked list.</p>
-    <div class="blocked-domain" id="blocked-domain">Blocked site</div>
-    <button id="manage-btn" type="button">Review Blocked Sites</button>
+    <header class="hero">
+      <span class="hero-badge">Focus Keeper</span>
+      <h1>Access Restricted</h1>
+      <p>Your request to visit <span class="blocked-domain" id="blocked-domain">this site</span> is blocked under your focus policies.</p>
+      <div id="violation-banner" class="violation-banner hidden" role="alert"></div>
+    </header>
+
+    <div class="layout-grid">
+      <section class="panel request-panel">
+        <h2>Ask for temporary access</h2>
+        <p class="muted">Explain the work you need to do so your manager can grant access quickly.</p>
+        <form id="request-form">
+          <div class="field-group">
+            <label for="request-purpose">Purpose</label>
+            <textarea id="request-purpose" placeholder="Explain what you need to do." required></textarea>
+          </div>
+          <div class="field-group">
+            <label for="request-duration">Minutes needed</label>
+            <div class="time-selector">
+              <div class="preset-buttons">
+                <button type="button" class="preset-btn" data-minutes="15">15m</button>
+                <button type="button" class="preset-btn active" data-minutes="30">30m</button>
+                <button type="button" class="preset-btn" data-minutes="60">1h</button>
+                <button type="button" class="preset-btn" data-minutes="120">2h</button>
+              </div>
+              <div class="time-display">
+                <span class="time-value" id="time-display">30</span>
+                <span class="time-unit">minutes</span>
+              </div>
+              <div class="custom-slider-container">
+                <div class="slider-wrapper">
+                  <input id="request-duration" type="range" min="5" max="240" step="5" value="30" class="time-slider" required>
+                  <div class="slider-track">
+                    <div class="slider-fill"></div>
+                    <div class="slider-thumb"></div>
+                  </div>
+                </div>
+                <div class="slider-labels">
+                  <span>5min</span>
+                  <span>4h</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="actions">
+            <button type="submit" id="submit-request" class="primary">Request access</button>
+            <button type="button" class="secondary" id="manage-btn">Open manager</button>
+          </div>
+          <div class="status-line" id="request-status" role="status" aria-live="polite"></div>
+        </form>
+      </section>
+
+      <section class="panel policy-box" id="policy-overview">
+        <h2>Policy overview</h2>
+        <p id="global-policy-text" class="policy-summary">No global policy defined.</p>
+        <div class="site-policy">
+          <h3>Site-specific policy</h3>
+          <p id="site-policy-text">No policy recorded for this site.</p>
+        </div>
+      </section>
+    </div>
   </main>
   <script src="blocked.js"></script>
 </body>

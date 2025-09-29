@@ -1,11 +1,13 @@
 {
   "manifest_version": 3,
   "name": "Minimal Blocker",
-  "version": "0.2.0",
-  "description": "Blocks websites listed in the extension management page.",
+  "version": "0.3.0",
+  "description": "Blocks websites listed in the extension management page with AI-assisted policy handling.",
   "permissions": [
     "storage",
-    "declarativeNetRequest"
+    "declarativeNetRequest",
+    "alarms",
+    "tabs"
   ],
   "host_permissions": [
     "<all_urls>"
@@ -14,7 +16,14 @@
     "service_worker": "background.js"
   },
   "action": {
-    "default_title": "Block Websites"
+    "default_title": "Block Websites",
+    "default_popup": "popup.html"
   },
-  "options_page": "manager.html"
+  "options_page": "manager.html",
+  "web_accessible_resources": [
+    {
+      "resources": ["blocked.html", "blocked.js", "manager.html", "manager.js"],
+      "matches": ["<all_urls>"]
+    }
+  ]
 }

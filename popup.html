@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Blocker Overview</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    :root {
+      color-scheme: light dark;
+      font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --bg: #0f172a;
+      --surface: rgba(15, 23, 42, 0.9);
+      --surface-alt: rgba(30, 41, 59, 0.85);
+      --border: rgba(255, 255, 255, 0.08);
+      --fg: #f8fafc;
+      --muted: rgba(248, 250, 252, 0.65);
+      --accent: #38bdf8;
+      --accent-soft: rgba(56, 189, 248, 0.18);
+      --success: #34d399;
+      --danger: #f87171;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-width: 320px;
+      background: linear-gradient(160deg, rgba(15, 23, 42, 0.97), rgba(30, 64, 175, 0.8));
+      color: var(--fg);
+    }
+
+    main {
+      padding: 16px;
+      display: grid;
+      gap: 16px;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    h1 {
+      font-size: 1.05rem;
+      margin: 0;
+      letter-spacing: 0.01em;
+    }
+
+    #open-manager {
+      font-family: inherit;
+      font-weight: 600;
+      font-size: 0.85rem;
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: rgba(56, 189, 248, 0.14);
+      color: var(--fg);
+      cursor: pointer;
+    }
+
+    #open-manager:hover {
+      background: rgba(56, 189, 248, 0.22);
+    }
+
+    #site-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: 10px;
+    }
+
+    .site-row {
+      border-radius: 14px;
+      padding: 10px 12px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      display: grid;
+      gap: 4px;
+    }
+
+    .site-row.allowed {
+      border-color: rgba(52, 211, 153, 0.4);
+      background: linear-gradient(135deg, rgba(15, 118, 110, 0.2), rgba(15, 118, 110, 0.05));
+    }
+
+    .site-row.blocked {
+      border-color: rgba(248, 113, 113, 0.32);
+      background: linear-gradient(135deg, rgba(127, 29, 29, 0.25), rgba(127, 29, 29, 0.08));
+    }
+
+    .site-name {
+      font-weight: 600;
+    }
+
+    .site-status {
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .site-actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 6px;
+    }
+
+    .action-button {
+      font-family: inherit;
+      font-weight: 600;
+      font-size: 0.78rem;
+      padding: 5px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(248, 250, 252, 0.28);
+      background: rgba(148, 163, 184, 0.12);
+      color: var(--fg);
+      cursor: pointer;
+    }
+
+    .action-button:hover:enabled {
+      background: rgba(148, 163, 184, 0.22);
+    }
+
+    .action-button:disabled {
+      opacity: 0.6;
+      cursor: default;
+    }
+
+    .empty {
+      border-radius: 14px;
+      padding: 16px;
+      text-align: center;
+      background: var(--surface-alt);
+      border: 1px dashed var(--border);
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    footer {
+      font-size: 0.72rem;
+      text-align: center;
+      color: rgba(248, 250, 252, 0.45);
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <h1>Blocker overview</h1>
+      <button id="open-manager" type="button">Open hub</button>
+    </header>
+    <ul id="site-list"></ul>
+    <template id="empty-template">
+      <li class="empty">No blocked websites yet.</li>
+    </template>
+    <footer>
+      Times update automatically while the popup stays open.
+    </footer>
+  </main>
+  <script src="popup.js"></script>
+</body>
+</html>
