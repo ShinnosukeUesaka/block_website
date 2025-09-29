@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Minimal Blocker",
+  "name": "WiseBlock",
   "version": "0.3.0",
   "description": "Blocks websites listed in the extension management page with AI-assisted policy handling.",
   "permissions": [
@@ -16,7 +16,7 @@
     "service_worker": "background.js"
   },
   "action": {
-    "default_title": "Block Websites",
+    "default_title": "WiseBlock",
     "default_popup": "popup.html"
   },
   "options_page": "manager.html",

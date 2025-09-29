@@ -346,7 +346,6 @@ async function callOpenAIForMonitoring({ apiKey, screenshotDataUrl, allowance })
     },
     body: JSON.stringify({
       model: 'gpt-5-nano',
-      temperature: 0,
       response_format: {
         type: 'json_schema',
         json_schema: {
@@ -811,8 +810,7 @@ async function callOpenAI({ apiKey, prompt }) {
       Authorization: `Bearer ${apiKey}`
     },
     body: JSON.stringify({
-      model: 'gpt-4o-2024-08-06',
-      temperature: 0,
+      model: 'gpt-5-mini',
       response_format: {
         type: 'json_schema',
         json_schema: {

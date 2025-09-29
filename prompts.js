@@ -26,3 +26,26 @@ function createReviewPrompt({ host, purpose, durationMinutes, sitePolicy, global
 
   return `Global policy:\n${globalPolicy || 'No global policy defined.'}\n\nSite policy for ${host}:\n${sitePolicyText}\n\nBlocked hosts:\n${blockedList}\n\nAccess request details:\n- Host: ${host}\n- Purpose: ${purpose}\n- Requested minutes: ${durationMinutes}\n- Request time: ${requestTimestamp}`;
 }
+
+function createMonitoringPrompt({ host, purpose, sitePolicy, globalPolicy, approvedReason }) {
+  const sitePolicyText = sitePolicy ? sitePolicy : 'No site-specific policy recorded.';
+  const now = new Date();
+  let monitoringTimestamp = now.toISOString();
+
+  try {
+    monitoringTimestamp = now.toLocaleString(undefined, {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      timeZoneName: 'short'
+    });
+  } catch (_error) {
+    // Fall back to ISO string if locale formatting fails.
+  }
+
+  return `Global policy:\n${globalPolicy || 'No global policy defined.'}\n\nSite policy for ${host}:\n${sitePolicyText}\n\nApproved access details:\n- Host: ${host}\n- Stated purpose: ${purpose}\n- Approval reason: ${approvedReason}\n- Monitoring time: ${monitoringTimestamp}`;
+}
